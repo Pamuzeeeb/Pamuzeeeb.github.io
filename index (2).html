@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .quiz-option.selected {
+            background-color: #3b82f6; /* bg-blue-500 */
+            color: white;
+            border-color: #2563eb; /* border-blue-600 */
+        }
+        #explanationModal, #nav-panel {
+            transition: opacity 0.3s ease;
+        }
+        .nav-btn {
+            border: 1px solid #d1d5db;
+            background-color: #f9fafb;
+        }
+        .nav-btn.answered {
+            background-color: #dbeafe; /* bg-blue-100 */
+            border-color: #93c5fd; /* border-blue-300 */
+            color: #1e40af; /* text-blue-800 */
+        }
+        .nav-btn.current {
+            background-color: #3b82f6;
+            border-color: #2563eb;
+            color: white;
+            font-weight: bold;
+        }
+        .topic-button {
+            transition: all 0.2s ease-in-out;
+        }
+        .topic-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800 flex items-center justify-center min-h-screen p-4">
+    <div id="quiz-container" class="w-full max-w-5xl mx-auto bg-white p-6 sm:p-8 rounded-2xl shadow-lg">
+        <!-- Layar Awal (Pemilihan Topik) -->
+        <div id="start-screen">
+            <h1 class="text-3xl sm:text-4xl font-bold text-center text-blue-600 mb-2">UAP Oseanografi Biologi</h1>
+            <p class="text-center text-gray-600 mb-8">100 Soal Isian Singkat</p>
+            <div id="topic-selection" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <!-- Tombol topik akan di-generate oleh JavaScript -->
+            </div>
+        </div>
+
+        <!-- Layar Kuis -->
+        <div id="quiz-screen" class="hidden">
+            <div class="flex justify-between items-start mb-2">
+                 <div>
+                    <h2 id="quiz-topic-title" class="text-2xl font-bold text-blue-600"></h2>
+                    <button id="nav-toggle-btn" onclick="toggleNavPanel()" class="text-sm text-blue-600 hover:underline mt-1">
+                        Navigasi Soal
+                    </button>
+                </div>
+                <span id="question-counter" class="text-lg font-semibold text-gray-500 text-right"></span>
+            </div>
+            
+             <div class="w-full bg-gray-200 rounded-full h-2.5 mb-6">
+                <div id="progress-bar" class="bg-blue-600 h-2.5 rounded-full transition-all duration-300"></div>
+            </div>
+            
+            <div id="question-card" class="bg-blue-50 border-2 border-blue-200 p-6 rounded-xl min-h-[150px] flex items-center justify-center mb-6">
+                <p id="question-text" class="text-center text-lg sm:text-xl font-medium"></p>
+            </div>
+
+            <!-- Container Jawaban Isian Singkat -->
+            <div id="essay-container" class="mb-6">
+                 <label class="block text-gray-700 text-sm font-bold mb-2" for="essay-answer">Jawaban Anda:</label>
+                 <textarea id="essay-answer" class="w-full p-4 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition text-lg" rows="3" placeholder="Ketik jawaban singkat di sini..."></textarea>
+            </div>
+
+            <!-- Container Opsi (Disembunyikan karena fokus isian singkat, tapi disiapkan jika needed) -->
+            <div id="options-container" class="hidden grid grid-cols-1 md:grid-cols-2 gap-4 mb-6"></div>
+
+            <div class="flex justify-between items-center mt-8">
+                 <button id="prev-btn" onclick="prevQuestion()" class="bg-gray-500 text-white font-bold py-2 px-6 rounded-lg hover:bg-gray-600 transition duration-300">Sebelumnya</button>
+                 <button onclick="showResults()" class="bg-green-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-green-700 transition duration-300">Selesai & Lihat Kunci</button>
+                 <button id="next-btn" onclick="nextQuestion()" class="bg-blue-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-blue-700 transition duration-300">Selanjutnya</button>
+            </div>
+        </div>
+
+        <!-- Layar Hasil -->
+        <div id="result-screen" class="hidden text-center">
+            <h2 class="text-3xl font-bold text-blue-600 mb-4">Kunci Jawaban & Review</h2>
+            <p class="text-lg mb-6 text-gray-600">Bandingkan jawaban Anda dengan kunci jawaban komprehensif di bawah ini.</p>
+            
+            <div id="answers-review" class="text-left max-h-[60vh] overflow-y-auto p-4 bg-gray-50 rounded-lg border space-y-4"></div>
+            
+            <div class="mt-8 flex justify-center space-x-4">
+                <button onclick="restartQuiz()" class="bg-blue-600 text-white font-bold py-3 px-8 rounded-lg hover:bg-blue-700 transition duration-300">
+                    Kembali ke Menu Utama
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Navigasi -->
+    <div id="nav-panel" class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 hidden z-40" onclick="toggleNavPanel()">
+        <div class="bg-white rounded-2xl p-6 max-w-3xl w-full shadow-2xl" onclick="event.stopPropagation()">
+            <h3 class="text-xl font-bold mb-4">Navigasi Soal</h3>
+            <div id="nav-grid" class="grid grid-cols-5 sm:grid-cols-10 gap-2 max-h-[60vh] overflow-y-auto p-2"></div>
+            <div class="mt-6 text-right">
+                <button onclick="toggleNavPanel()" class="bg-gray-500 text-white font-bold py-2 px-6 rounded-lg hover:bg-gray-600">Tutup</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- Data Kuis 100 Soal Isian Singkat ---
+        // Mencakup Modul 1 (Nekton), 2 (Klorofil-a), 3 (Sel), 4 (Fitoplankton), 5 (Zooplankton), 6 (NPP)
+        // Fokus: Teori Dasar (Bab 2), Metodologi (Bab 3), Hasil/Analisis (Bab 4)
+        
+        const quizDataCategorized = {
+            "Modul 1: Nekton": {
+                essay: [
+                    { question: "Apa definisi Nekton?", answer: "Organisme hewani laut penghuni zona pelagis yang mampu berenang dan bergerak aktif tanpa terpengaruh oleh hambatan arus atau pergerakan massa air." },
+                    { question: "Sebutkan 3 filum utama yang termasuk dalam kelompok Nekton!", answer: "Chordata (ikan, mamalia laut), Mollusca (cephalopoda), dan Arthropoda (dekapoda)." },
+                    { question: "Apa nama zona kedalaman laut 0-200 meter yang memiliki intensitas cahaya matahari tertinggi?", answer: "Zona Epipelagis." },
+                    { question: "Sebutkan adaptasi khusus yang dimiliki nekton di zona mesopelagis ('zona senja')!", answer: "Bioluminesensi (untuk menarik mangsa/komunikasi) dan migrasi vertikal harian." },
+                    { question: "Apa istilah untuk sirip ekor ikan yang bentuknya simetris antara bagian atas dan bawah?", answer: "Homocercal." },
+                    { question: "Fungsi utama dari linea lateralis (gurat sisi) pada ikan adalah?", answer: "Mendeteksi gerakan dan getaran di dalam air (navigasi dan deteksi mangsa/predator)." },
+                    { question: "Pada anatomi ikan, organ apa yang berfungsi mengatur daya apung agar ikan bisa melayang di berbagai kedalaman?", answer: "Gelembung renang (Swim Bladder)." },
+                    { question: "Apa fungsi operkulum pada ikan bertulang sejati (Osteichthyes)?", answer: "Melindungi insang dan membantu memompa air melewati insang untuk pernapasan." },
+                    { question: "Sebutkan perbedaan utama antara Chondrichthyes dan Osteichthyes dari segi penyusun rangkanya!", answer: "Chondrichthyes memiliki rangka tulang rawan, sedangkan Osteichthyes memiliki rangka tulang keras." },
+                    { question: "Apa fungsi dari insisi (sayatan) berbentuk jendela pada dinding perut saat melakukan diseksi ikan?", answer: "Untuk memperlihatkan dan mengamati organ-organ internal ikan tanpa merusak strukturnya." },
+                    { question: "Mengapa ikan yang hidup di zona batipelagis cenderung memiliki metabolisme yang rendah?", answer: "Karena sumber makanan sangat terbatas dan kondisi lingkungan yang ekstrem (dingin, tekanan tinggi)." },
+                    { question: "Apa fungsi sirip pektoral (dada) pada pergerakan ikan?", answer: "Mengarahkan, mengontrol gerakan, melakukan belokan tajam, dan pengereman." },
+                    { question: "Sebutkan tipe bentuk tubuh ikan yang ideal untuk perenang cepat di perairan terbuka!", answer: "Fusiform atau bentuk torpedo (streamline)." },
+                    { question: "Apa yang dimaksud dengan 'suspensi rahang autodiastylic' pada Placodermi?", answer: "Rahang bawah terhubung langsung dengan tengkorak, memberikan keleluasaan lebih dalam membuka mulut." },
+                    { question: "Organ apa yang biasanya diamati pertama kali saat membuka operkulum ikan?", answer: "Insang (Gill filaments, gill rakers, gill arches)." }
+                ],
+                mcq: [] 
+            },
+            "Modul 2: Klorofil-a": {
+                essay: [
+                    { question: "Apa rumus kimia dari Klorofil-a?", answer: "C55H72MgN4O5." },
+                    { question: "Logam apa yang menjadi pusat aktif pada struktur cincin porfirin klorofil-a?", answer: "Magnesium (Mg)." },
+                    { question: "Mengapa klorofil-a digunakan sebagai indikator utama produktivitas primer perairan?", answer: "Karena klorofil-a merupakan pigmen utama fotosintesis yang ada pada semua fitoplankton, sehingga konsentrasinya mencerminkan biomassa fitoplankton." },
+                    { question: "Pada analisis spektrofotometri, hukum apa yang menyatakan bahwa absorbansi sebanding dengan konsentrasi zat?", answer: "Hukum Lambert-Beer." },
+                    { question: "Apa fungsi penambahan larutan aseton 90% pada kertas filter GF/F saat preparasi sampel?", answer: "Untuk mengekstraksi (melarutkan) pigmen klorofil-a dari sel-sel fitoplankton yang tertahan di kertas filter." },
+                    { question: "Mengapa sampel klorofil-a harus dibungkus aluminium foil dan disimpan dalam suhu dingin?", answer: "Untuk mencegah degradasi klorofil akibat paparan cahaya (fotodegradasi) dan panas." },
+                    { question: "Berapa lama waktu inkubasi sampel klorofil-a dalam aseton di lemari es sebelum diukur?", answer: "24 jam." },
+                    { question: "Apa tujuan pengukuran absorbansi pada panjang gelombang 750 nm?", answer: "Sebagai koreksi terhadap turbiditas (kekeruhan) sampel, karena klorofil tidak menyerap cahaya pada 750 nm." },
+                    { question: "Sebutkan 3 panjang gelombang utama selain 750 nm yang diukur dalam metode trichromatic untuk klorofil-a!", answer: "664 nm, 647 nm, dan 630 nm." },
+                    { question: "Jika nilai klorofil-a di suatu perairan > 50 µg/L, perairan tersebut dikategorikan sebagai?", answer: "Hiper-eutrofik." },
+                    { question: "Bagaimana pengaruh tingginya nutrien (nitrat dan fosfat) dari daratan terhadap konsentrasi klorofil-a di pesisir?", answer: "Meningkatkan konsentrasi klorofil-a karena nutrien memicu pertumbuhan fitoplankton." },
+                    { question: "Apa fungsi syringe filter PTFE 0.2 mikrometer pada tahap akhir preparasi?", answer: "Untuk menyaring ekstrak sampel dari partikel-partikel kecil sebelum dimasukkan ke dalam kuvet agar tidak mengganggu pembacaan spektrofotometer." },
+                    { question: "Apa yang dimaksud dengan 'blanko' dalam pengukuran spektrofotometri klorofil-a?", answer: "Larutan pelarut murni (aseton 90%) tanpa sampel, digunakan untuk mengkalibrasi alat (menol-kan absorbansi)." },
+                    { question: "Alat apa yang digunakan untuk memisahkan cahaya polikromatik menjadi monokromatik pada spektrofotometer?", answer: "Monokromator (prisma atau kisi difraksi)." },
+                    { question: "Mengapa konsentrasi klorofil-a biasanya lebih tinggi di perairan pantai dibanding laut lepas?", answer: "Karena adanya suplai nutrien yang tinggi dari limpasan sungai (run-off) di wilayah pantai." }
+                ],
+                mcq: []
+            },
+            "Modul 3: Pengamatan Sel": {
+                essay: [
+                    { question: "Sebutkan perbedaan utama struktur sel tumbuhan laut dibanding sel hewan laut!", answer: "Sel tumbuhan memiliki dinding sel, kloroplas, dan vakuola besar, sedangkan sel hewan tidak." },
+                    { question: "Apa fungsi larutan fiksatif (seperti formalin atau etanol) pada pembuatan preparat awetan?", answer: "Menghentikan aktivitas biologis, mencegah pembusukan, dan mempertahankan struktur sel agar mirip kondisi aslinya." },
+                    { question: "Mengapa eritrosit (sel darah merah) ikan berbeda dengan eritrosit mamalia/manusia?", answer: "Eritrosit ikan memiliki inti sel (nukleus) dan berbentuk oval, sedangkan eritrosit mamalia tidak berinti dan berbentuk cakram bikonkaf." },
+                    { question: "Apa fungsi pirenoid pada sel alga hijau (Chlorophyta)?", answer: "Menyimpan cadangan makanan hasil fotosintesis (seperti pati/amilum)." },
+                    { question: "Apa nama dinding sel khas pada Diatom yang terbuat dari silika?", answer: "Frustule." },
+                    { question: "Zat pewarna apa yang umum digunakan untuk memperjelas inti sel dan sitoplasma pada preparat sel darah?", answer: "Giemsa atau Wright." },
+                    { question: "Apa fungsi vakuola kontraktil pada organisme uniseluler laut?", answer: "Osmoregulasi (mengatur tekanan osmotik dengan memompa air keluar sel)." },
+                    { question: "Sebutkan organel sel yang berfungsi sebagai tempat respirasi seluler (penghasil energi)!", answer: "Mitokondria." },
+                    { question: "Pada Dinoflagellata, struktur apa yang digunakan untuk pergerakan?", answer: "Flagela (biasanya memiliki dua flagela)." },
+                    { question: "Mengapa pengamatan sel darah ikan penting dalam oseanografi biologi?", answer: "Sebagai indikator kesehatan ikan dan adaptasi fisiologis terhadap kondisi lingkungan (misal: kadar oksigen rendah)." },
+                    { question: "Apa fungsi 'Knob fokus halus' pada mikroskop?", answer: "Untuk memperjelas/mempertajam bayangan spesimen setelah fokus awal didapatkan." },
+                    { question: "Apa ciri khas morfologi sel Spirogyra (Chlorophyta) di bawah mikroskop?", answer: "Kloroplas berbentuk pita spiral." },
+                    { question: "Apa peran sentriol pada sel hewan?", answer: "Berperan dalam proses pembelahan sel." },
+                    { question: "Dalam preparat awetan, media perekat apa yang biasa digunakan untuk menutup kaca penutup (cover glass)?", answer: "Gliserin atau resin kanada (Canada Balsam)." },
+                    { question: "Struktur sel apa yang mengatur keluar-masuknya zat dari dan ke dalam sel?", answer: "Membran plasma (membran sel)." }
+                ],
+                mcq: []
+            },
+            "Modul 4: Fitoplankton": {
+                essay: [
+                    { question: "Apa definisi Fitoplankton?", answer: "Plankton nabati yang memiliki klorofil, mengapung bebas, dan mampu melakukan fotosintesis." },
+                    { question: "Sebutkan 5 divisi utama fitoplankton!", answer: "Cyanophyta, Chrysophyta, Pyrrophyta, Chlorophyta, dan Euglenophyta." },
+                    { question: "Apa yang dimaksud dengan Harmful Algal Blooms (HABs)?", answer: "Fenomena ledakan populasi alga (blooming) yang memproduksi racun atau dampak negatif lain bagi ekosistem dan manusia." },
+                    { question: "Alat apa yang digunakan untuk mencacah/menghitung kelimpahan fitoplankton di laboratorium?", answer: "Sedgewick Rafter Counting Cell." },
+                    { question: "Berapa volume air yang dapat ditampung dalam satu sel Sedgewick Rafter?", answer: "1 ml (1000 mm³)." },
+                    { question: "Apa penyebab utama terjadinya eutrofikasi yang memicu blooming fitoplankton?", answer: "Penambahan zat hara (nutrien) berlebih, terutama nitrogen dan fosfat, ke dalam perairan." },
+                    { question: "Sebutkan rumus umum menghitung kelimpahan plankton (N)!", answer: "N = (T/L) x (P/p) x (V/v) x (1/w)." },
+                    { question: "Kelompok fitoplankton mana yang dinding selnya mengandung silika?", answer: "Chrysophyta (khususnya kelas Bacillariophyceae/Diatom)." },
+                    { question: "Apa peran fitoplankton dalam siklus karbon global?", answer: "Menyerap CO2 dari atmosfer melalui fotosintesis dan menyimpannya sebagai biomassa (Biological Carbon Pump)." },
+                    { question: "Disebut apakah metode pengambilan sampel plankton dengan cara menyaring air laut menggunakan plankton net?", answer: "Metode filtrasi (penyaringan)." },
+                    { question: "Mengapa Euglenophyta unik dibandingkan divisi fitoplankton lain?", answer: "Karena memiliki ciri tumbuhan (klorofil) dan ciri hewan (flagela, bintik mata, tidak berdinding sel kaku)." },
+                    { question: "Apa fungsi pengawetan sampel fitoplankton menggunakan formalin?", answer: "Untuk menjaga keutuhan morfologi sel agar bisa diidentifikasi di laboratorium." },
+                    { question: "Sebutkan dampak negatif HABs bagi ikan!", answer: "Kematian massal akibat kekurangan oksigen, penyumbatan insang, atau keracunan." },
+                    { question: "Dalam metode Sedgewick Rafter, berapa jumlah kotak/lapang pandang yang minimal disarankan untuk diamati?", answer: "Biasanya 5-10 lapang pandang secara sistematis (diagonal atau acak)." },
+                    { question: "Apa yang dimaksud dengan 'Red Tide'?", answer: "Perubahan warna air laut menjadi merah/kecoklatan akibat blooming fitoplankton tertentu (seringkali Dinoflagellata)." }
+                ],
+                mcq: []
+            },
+            "Modul 5: Zooplankton": {
+                essay: [
+                    { question: "Apa definisi Zooplankton?", answer: "Plankton hewani yang bersifat heterotrof dan pergerakannya terbatas (mengikuti arus)." },
+                    { question: "Apa yang dimaksud dengan Diel Vertical Migration (DVM)?", answer: "Pergerakan vertikal harian zooplankton: naik ke permukaan saat malam untuk makan, turun ke kedalaman saat siang untuk menghindari predator." },
+                    { question: "Berdasarkan siklus hidupnya, larva ikan yang hidup sebagai plankton sementara disebut?", answer: "Meroplankton." },
+                    { question: "Zooplankton yang seluruh hidupnya dihabiskan sebagai plankton disebut?", answer: "Holoplankton (contoh: Copepoda)." },
+                    { question: "Apa peran utama zooplankton dalam rantai makanan?", answer: "Konsumen primer (memakan fitoplankton) dan penghubung transfer energi ke tingkat trofik lebih tinggi (ikan, dll)." },
+                    { question: "Sebutkan faktor lingkungan utama yang memicu migrasi vertikal harian zooplankton!", answer: "Cahaya matahari." },
+                    { question: "Alat apa yang digunakan untuk menghitung kelimpahan zooplankton dalam praktikum?", answer: "Sedgewick Rafter." },
+                    { question: "Apa yang dimaksud dengan Tikoplankton?", answer: "Organisme bentos yang terlepas dari dasar perairan dan terbawa arus sehingga sementara menjadi plankton." },
+                    { question: "Sebutkan contoh Holoplankton yang paling umum ditemukan di laut!", answer: "Kopepoda (Copepod)." },
+                    { question: "Mengapa zooplankton melakukan migrasi ke lapisan dalam pada siang hari?", answer: "Untuk menghindari predator visual (ikan) yang berburu menggunakan cahaya." },
+                    { question: "Apa fungsi formalin 4% dalam penanganan sampel zooplankton?", answer: "Sebagai larutan pengawet (fiksatif)." },
+                    { question: "Bagaimana cara menghitung Indeks Keanekaragaman (Shannon-Wiener)?", answer: "H' = - Σ (Pi x ln Pi), dimana Pi = ni/N." },
+                    { question: "Jika nilai Indeks Dominasi mendekati 1, apa artinya?", answer: "Ada satu spesies yang mendominasi komunitas tersebut (keanekaragaman rendah)." },
+                    { question: "Apa pengaruh suhu terhadap siklus hidup zooplankton?", answer: "Peningkatan suhu (dalam batas optimal) dapat mempercepat metabolisme dan reproduksi." },
+                    { question: "Sebutkan contoh Meroplankton dari kelompok Krustasea!", answer: "Larva udang (Nauplius, Zoea) atau larva kepiting (Megalopa)." }
+                ],
+                mcq: []
+            },
+            "Modul 6: Produktivitas Primer": {
+                essay: [
+                    { question: "Apa definisi Produktivitas Primer Kotor (GPP)?", answer: "Laju total fotosintesis/produksi bahan organik tanpa memperhitungkan energi yang digunakan untuk respirasi." },
+                    { question: "Apa definisi Produktivitas Primer Bersih (NPP)?", answer: "Laju penyimpanan energi organik di jaringan tumbuhan setelah dikurangi respirasi (NPP = GPP - R)." },
+                    { question: "Metode apa yang digunakan untuk mengukur oksigen terlarut dalam praktikum ini?", answer: "Metode Titrasi Winkler." },
+                    { question: "Apa fungsi 'Botol Gelap' dalam inkubasi metode oksigen?", answer: "Untuk mengukur laju respirasi komunitas (karena tidak terjadi fotosintesis tanpa cahaya)." },
+                    { question: "Bagaimana cara menghitung nilai Respirasi (R) dari data botol?", answer: "Respirasi = DO Awal (Botol Inisial) - DO Akhir (Botol Gelap)." },
+                    { question: "Bagaimana cara menghitung NPP dari data botol?", answer: "NPP = DO Akhir (Botol Terang) - DO Awal (Botol Inisial)." },
+                    { question: "Bagaimana cara menghitung GPP dari data botol?", answer: "GPP = DO Akhir (Botol Terang) - DO Akhir (Botol Gelap) ATAU GPP = NPP + R." },
+                    { question: "Apa fungsi penambahan MnSO4 dan Alkali Iodida (KI-KOH) pada metode Winkler?", answer: "Untuk memfiksasi oksigen terlarut dengan membentuk endapan mangan hidroksida/oksida." },
+                    { question: "Perubahan warna apa yang terjadi saat titik akhir titrasi dengan indikator amilum?", answer: "Dari biru tua menjadi bening (tidak berwarna)." },
+                    { question: "Larutan apa yang digunakan sebagai titran dalam metode Winkler?", answer: "Natrium Tiosulfat (Na2S2O3)." },
+                    { question: "Apa yang dimaksud dengan 'titik kompensasi' kedalaman?", answer: "Kedalaman di mana laju fotosintesis sama dengan laju respirasi (NPP = 0)." },
+                    { question: "Faktor apa yang paling membatasi produktivitas primer di laut dalam?", answer: "Cahaya matahari." },
+                    { question: "Sebutkan klasifikasi perairan berdasarkan produktivitasnya (15-50 gC/m²/tahun)!", answer: "Oligotrofik." },
+                    { question: "Apa fungsi penambahan H2SO4 pekat pada sampel Winkler yang sudah ada endapannya?", answer: "Untuk melarutkan endapan dan membebaskan iodium (I2) yang setara dengan jumlah oksigen." },
+                    { question: "Mengapa botol BOD tidak boleh ada gelembung udara saat ditutup?", answer: "Karena gelembung udara mengandung oksigen yang akan menambah nilai DO terukur (bias)." },
+                    { question: "Apa yang dimaksud dengan metode 'inkubasi in-situ'?", answer: "Inkubasi botol sampel dilakukan langsung di perairan pada kedalaman tempat sampel diambil." },
+                    { question: "Berdasarkan strukturnya, produktivitas primer di estuari umumnya tinggi atau rendah? Mengapa?", answer: "Tinggi, karena suplai nutrien yang melimpah dari sungai." },
+                    { question: "Apa hubungan antara intensitas cahaya dan fotosintesis pada kurva P-I?", answer: "Fotosintesis meningkat seiring intensitas cahaya hingga titik jenuh, lalu dapat menurun jika cahaya terlalu kuat (fotoinhibisi)." },
+                    { question: "Berapa faktor konversi umum untuk mengubah mg O2 menjadi mg C (karbon)?", answer: "0.375 (koefisien fotosintesis)." },
+                    { question: "Apa peran termoklin dalam membatasi produktivitas primer di laut lepas tropis?", answer: "Menghambat pencampuran vertikal, sehingga nutrien dari lapisan dalam tidak bisa naik ke zona fotik." }
+                ],
+                mcq: []
+            },
+            "Campuran & Umum": {
+                essay: [
+                    { question: "Apa itu Photosynthetically Active Radiation (PAR)?", answer: "Spektrum cahaya (400-700 nm) yang dapat digunakan fitoplankton untuk fotosintesis." },
+                    { question: "Organisme apa yang menjadi penghubung utama antara produsen primer dan konsumen tingkat tinggi di laut?", answer: "Zooplankton (terutama Copepoda)." },
+                    { question: "Disebut apakah zona laut di mana cahaya matahari masih tembus?", answer: "Zona Fotik / Eufotik." },
+                    { question: "Apa yang dimaksud dengan 'Biological Carbon Pump'?", answer: "Mekanisme penyerapan karbon oleh fitoplankton di permukaan dan transportasinya ke laut dalam melalui pengendapan." },
+                    { question: "Larutan apa yang digunakan sebagai indikator amilum pada titrasi Winkler?", answer: "Kanji / Amilum." }
+                ],
+                mcq: []
+            }
+        };
+
+        // --- Logika Aplikasi ---
+        const startScreen = document.getElementById('start-screen');
+        const quizScreen = document.getElementById('quiz-screen');
+        const resultScreen = document.getElementById('result-screen');
+        const topicSelection = document.getElementById('topic-selection');
+        const quizTopicTitle = document.getElementById('quiz-topic-title');
+        const questionText = document.getElementById('question-text');
+        const essayAnswer = document.getElementById('essay-answer');
+        const questionCounter = document.getElementById('question-counter');
+        const answersReview = document.getElementById('answers-review');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const navPanel = document.getElementById('nav-panel');
+        const navGrid = document.getElementById('nav-grid');
+        const progressBar = document.getElementById('progress-bar');
+
+        let currentQuestionIndex = 0;
+        let userAnswers = [];
+        let activeQuestions = [];
+        let currentTopic = '';
+
+        function initializeTopicSelection() {
+            topicSelection.innerHTML = '';
+            // Tombol "Semua Topik" sebagai default utama
+            const allButton = document.createElement('button');
+            allButton.innerHTML = '<span class="text-xl">📚</span><br>Semua Materi (100 Soal)';
+            allButton.classList.add('topic-button', 'w-full', 'p-6', 'bg-blue-600', 'text-white', 'font-bold', 'rounded-xl', 'shadow-md', 'hover:bg-blue-700', 'md:col-span-2', 'lg:col-span-3');
+            allButton.onclick = () => startQuiz('Semua Materi');
+            topicSelection.appendChild(allButton);
+
+            const topics = Object.keys(quizDataCategorized);
+            topics.forEach(topic => {
+                if(topic !== "Campuran & Umum") {
+                    const button = document.createElement('button');
+                    button.textContent = topic;
+                    button.classList.add('topic-button', 'w-full', 'p-4', 'bg-white', 'border-2', 'border-blue-200', 'rounded-lg', 'text-blue-700', 'font-semibold', 'hover:bg-blue-50', 'hover:border-blue-400');
+                    button.onclick = () => startQuiz(topic);
+                    topicSelection.appendChild(button);
+                }
+            });
+        }
+
+        function startQuiz(topic) {
+            currentTopic = topic;
+            startScreen.classList.add('hidden');
+            quizScreen.classList.remove('hidden');
+            resultScreen.classList.add('hidden');
+            
+            activeQuestions = [];
+            if (topic === 'Semua Materi') {
+                Object.keys(quizDataCategorized).forEach(catName => {
+                    const category = quizDataCategorized[catName];
+                    activeQuestions.push(...category.essay.map(q => ({...q, topic: catName})));
+                });
+            } else {
+                const category = quizDataCategorized[topic];
+                activeQuestions = category.essay.map(q => ({...q, topic}));
+            }
+            
+            // Acak soal
+            // activeQuestions = shuffleArray(activeQuestions); 
+
+            quizTopicTitle.textContent = topic;
+            currentQuestionIndex = 0;
+            
+            // Reset user answers
+            userAnswers = Array(activeQuestions.length).fill(null).map((_, i) => ({
+                question: activeQuestions[i].question,
+                userAnswer: '',
+                correctAnswer: activeQuestions[i].answer,
+                topic: activeQuestions[i].topic
+            }));
+            
+            populateNavPanel();
+            loadQuiz();
+        }
+        
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        function populateNavPanel() {
+            navGrid.innerHTML = '';
+            activeQuestions.forEach((_, index) => {
+                const btn = document.createElement('button');
+                btn.innerHTML = `<span>${index + 1}</span>`;
+                btn.classList.add('nav-btn', 'p-2', 'rounded-md', 'transition-colors', 'duration-200', 'flex', 'items-center', 'justify-center', 'text-sm');
+                btn.onclick = () => jumpToQuestion(index);
+                navGrid.appendChild(btn);
+            });
+        }
+
+        function updateNavPanel() {
+            const navButtons = navGrid.children;
+            const checkmarkSVG = `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-check-lg inline-block ml-1" viewBox="0 0 16 16"><path d="M12.736 3.97a.733.733 0 0 1 1.047 0c.286.289.29.756.01 1.05L7.88 12.01a.733.733 0 0 1-1.065.02L3.217 8.384a.757.757 0 0 1 0-1.06.733.733 0 0 1 1.047 0l3.052 3.093 5.4-6.425a.247.247 0 0 1 .02-.022Z"/></svg>`;
+
+            for (let i = 0; i < navButtons.length; i++) {
+                navButtons[i].classList.remove('current', 'answered');
+                navButtons[i].innerHTML = `<span>${i + 1}</span>`; 
+
+                if (userAnswers[i].userAnswer && userAnswers[i].userAnswer.trim() !== '') {
+                    navButtons[i].classList.add('answered');
+                    navButtons[i].innerHTML = `<span>${i + 1}</span>${checkmarkSVG}`;
+                }
+                if (i === currentQuestionIndex) {
+                    navButtons[i].classList.add('current');
+                }
+            }
+        }
+
+        function toggleNavPanel() {
+            navPanel.classList.toggle('hidden');
+            if (!navPanel.classList.contains('hidden')) {
+                updateNavPanel();
+            }
+        }
+
+        function jumpToQuestion(index) {
+            saveCurrentAnswer();
+            currentQuestionIndex = index;
+            loadQuiz();
+            toggleNavPanel();
+        }
+
+        function saveCurrentAnswer() {
+            userAnswers[currentQuestionIndex].userAnswer = essayAnswer.value;
+        }
+
+        function loadQuiz() {
+            const currentQuestionData = userAnswers[currentQuestionIndex];
+            questionText.textContent = currentQuestionData.question;
+            questionCounter.textContent = `Soal ${currentQuestionIndex + 1} / ${activeQuestions.length}`;
+            progressBar.style.width = `${((currentQuestionIndex + 1) / activeQuestions.length) * 100}%`;
+
+            essayAnswer.value = currentQuestionData.userAnswer || '';
+            essayAnswer.focus();
+            
+            prevBtn.style.visibility = currentQuestionIndex === 0 ? 'hidden' : 'visible';
+            nextBtn.textContent = currentQuestionIndex === activeQuestions.length - 1 ? 'Selesai' : 'Selanjutnya';
+        }
+
+        function prevQuestion() {
+            if (currentQuestionIndex > 0) {
+                saveCurrentAnswer();
+                currentQuestionIndex--;
+                loadQuiz();
+            }
+        }
+
+        function nextQuestion() {
+            saveCurrentAnswer();
+            if (currentQuestionIndex < activeQuestions.length - 1) {
+                currentQuestionIndex++;
+                loadQuiz();
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            saveCurrentAnswer();
+            quizScreen.classList.add('hidden');
+            resultScreen.classList.remove('hidden');
+
+            answersReview.innerHTML = '';
+            userAnswers.forEach((answer, index) => {
+                const reviewItem = document.createElement('div');
+                reviewItem.classList.add('p-5', 'border-l-4', 'border-blue-500', 'bg-white', 'shadow-sm', 'rounded-r-lg');
+                
+                // Cek apakah jawaban kosong
+                const userAnswerText = answer.userAnswer.trim() ? answer.userAnswer : '<span class="text-red-500 italic">(Tidak dijawab)</span>';
+                
+                reviewItem.innerHTML = `
+                    <div class="flex justify-between items-start mb-2">
+                        <span class="font-bold text-gray-700 text-lg">Soal ${index + 1}</span>
+                        <span class="text-xs font-semibold bg-gray-200 text-gray-700 px-2 py-1 rounded">${answer.topic}</span>
+                    </div>
+                    <p class="mb-3 text-gray-800 font-medium">${answer.question}</p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
+                        <div class="bg-blue-50 p-3 rounded border border-blue-100">
+                            <p class="text-xs text-blue-600 font-bold uppercase mb-1">Jawaban Anda</p>
+                            <p class="text-gray-800">${userAnswerText}</p>
+                        </div>
+                        <div class="bg-green-50 p-3 rounded border border-green-100">
+                            <p class="text-xs text-green-600 font-bold uppercase mb-1">Kunci Jawaban</p>
+                            <p class="text-gray-800 font-semibold">${answer.correctAnswer}</p>
+                        </div>
+                    </div>
+                `;
+                answersReview.appendChild(reviewItem);
+            });
+        }
+        
+        function restartQuiz() {
+            resultScreen.classList.add('hidden');
+            startScreen.classList.remove('hidden');
+        }
+
+        // Initialize
+        window.onload = initializeTopicSelection;
+
+    </script>
+</body>
+</html>
+

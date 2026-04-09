@@ -3,53 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LING LING OSLING</title>
+    <title>Kompe Paket Alter</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-        }
-        .quiz-option.selected {
-            background-color: #3b82f6; /* bg-blue-500 */
-            color: white;
-            border-color: #2563eb; /* border-blue-600 */
-        }
-        #explanationModal, #nav-panel {
-            transition: opacity 0.3s ease;
-        }
-        .nav-btn {
-            border: 1px solid #d1d5db;
-            background-color: #f9fafb;
-        }
-        .nav-btn.answered {
-            background-color: #dbeafe; /* bg-blue-100 */
-            border-color: #93c5fd; /* border-blue-300 */
-            color: #1e40af; /* text-blue-800 */
-        }
-        .nav-btn.current {
-            background-color: #3b82f6;
-            border-color: #2563eb;
-            color: white;
-            font-weight: bold;
-        }
-        .topic-button {
-            transition: all 0.2s ease-in-out;
-        }
-        .topic-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        }
+        body { font-family: 'Inter', sans-serif; }
+        .quiz-option.selected { background-color: #3b82f6; color: white; border-color: #2563eb; }
+        #explanationModal, #nav-panel { transition: opacity 0.3s ease; }
+        .nav-btn.answered { background-color: #dbeafe; border-color: #93c5fd; color: #1e40af; }
+        .nav-btn.current { background-color: #3b82f6; border-color: #2563eb; color: white; font-weight: bold; }
+        .topic-button { transition: all 0.2s ease-in-out; }
+        .topic-button:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
     </style>
 </head>
 <body class="bg-gray-100 text-gray-800 flex items-center justify-center min-h-screen p-4">
     <div id="quiz-container" class="w-full max-w-4xl mx-auto bg-white p-6 sm:p-8 rounded-2xl shadow-lg">
-        <!-- Layar Awal (Pemilihan Topik) -->
+        
+        <!-- Layar Awal -->
         <div id="start-screen">
-            <h1 class="text-3xl sm:text-4xl font-bold text-center text-blue-600 mb-4">SIMULASI UAS OSLING</h1>
-            <p class="text-center text-gray-600 mb-8">Simulasi UAS osling by Akademik Keilmuan Komisariat HMO TRITON ITB.</p>
+            <h1 class="text-3xl sm:text-4xl font-bold text-center text-blue-600 mb-4">Alter Kompe</h1>
+            <p class="text-center text-gray-600 mb-8">Kompe rasa coklat, semua berhak akses kecuali Daeng Wahyudi.</p>
             <div id="topic-selection" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <!-- Tombol topik akan di-generate oleh JavaScript -->
+                <button onclick="startQuiz('Semua')" class="topic-button w-full p-4 bg-blue-600 text-white font-bold rounded-xl md:col-span-2 hover:bg-blue-700">Mulai Simulasi</button>
             </div>
         </div>
 
@@ -57,10 +32,8 @@
         <div id="quiz-screen" class="hidden">
             <div class="flex justify-between items-start mb-2">
                  <div>
-                    <h2 id="quiz-topic-title" class="text-2xl font-bold text-blue-600"></h2>
-                    <button id="nav-toggle-btn" onclick="toggleNavPanel()" class="text-sm text-blue-600 hover:underline mt-1">
-                        Navigasi Soal
-                    </button>
+                    <h2 id="quiz-topic-title" class="text-2xl font-bold text-blue-600">Oseanografi</h2>
+                    <button onclick="toggleNavPanel()" class="text-sm text-blue-600 hover:underline mt-1">Navigasi Soal</button>
                 </div>
                 <span id="question-counter" class="text-lg font-semibold text-gray-500 text-right"></span>
             </div>
@@ -70,17 +43,13 @@
             </div>
             
             <div id="question-card" class="bg-blue-50 border-2 border-blue-200 p-6 rounded-xl min-h-[150px] flex items-center justify-center mb-6">
-                <p id="question-text" class="text-center text-lg sm:text-xl"></p>
+                <p id="question-text" class="text-center text-lg sm:text-xl font-medium"></p>
             </div>
 
-            <div id="options-container" class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6"></div>
-            <div id="essay-container" class="hidden mb-6">
-                 <textarea id="essay-answer" class="w-full p-4 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition" rows="6" placeholder="Ketik jawaban esai Anda di sini..."></textarea>
-            </div>
+            <div id="options-container" class="grid grid-cols-1 gap-3 mb-6"></div>
 
             <div class="flex justify-between items-center mt-8">
                  <button id="prev-btn" onclick="prevQuestion()" class="bg-gray-500 text-white font-bold py-2 px-6 rounded-lg hover:bg-gray-600 transition duration-300">Sebelumnya</button>
-                 <button onclick="showResults()" class="bg-green-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-green-700 transition duration-300">Lihat Hasil</button>
                  <button id="next-btn" onclick="nextQuestion()" class="bg-blue-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-blue-700 transition duration-300">Selanjutnya</button>
             </div>
         </div>
@@ -88,15 +57,10 @@
         <!-- Layar Hasil -->
         <div id="result-screen" class="hidden text-center">
             <h2 class="text-3xl font-bold text-blue-600 mb-4">Hasil Kuis</h2>
-            <div id="topic-scores-breakdown" class="mb-8 text-left border rounded-lg p-4">
-                <!-- Rincian skor per topik akan ditampilkan di sini -->
-            </div>
-            <p class="text-lg mb-6">Tinjau jawaban Anda di bawah ini:</p>
-            <div id="answers-review" class="text-left max-h-[40vh] overflow-y-auto p-4 bg-gray-50 rounded-lg border"></div>
+            <div id="score-summary" class="text-4xl font-bold mb-6"></div>
+            <div id="answers-review" class="text-left max-h-[50vh] overflow-y-auto p-4 bg-gray-50 rounded-lg border"></div>
             <div class="mt-8 flex justify-center space-x-4">
-                <button onclick="restartQuiz()" class="bg-blue-600 text-white font-bold py-3 px-8 rounded-lg hover:bg-blue-700 transition duration-300">
-                    Kembali ke Awal
-                </button>
+                <button onclick="restartQuiz()" class="bg-blue-600 text-white font-bold py-3 px-8 rounded-lg hover:bg-blue-700 transition duration-300">Kembali ke Awal</button>
             </div>
         </div>
     </div>
@@ -107,7 +71,247 @@
             <h3 class="text-xl font-bold mb-4">Lompat ke Soal</h3>
             <div id="nav-grid" class="grid grid-cols-5 sm:grid-cols-10 gap-2 max-h-[60vh] overflow-y-auto p-2"></div>
             <div class="mt-6 text-right">
-                <button onclick="toggleNavPanel()" class="bg-gray-500 text-white font-bold py-2 px-6 rounded-lg hover:bg-gray-600">Tutup</button>
+                <button onclick="toggleNavPanel()" class="bg-gray-500 text-white font-bold py-2 px-6 rounded-lg">Tutup</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Data Soal (Dikutip Verbatim dari DOC-20260409-WA0026.docx)
+        // Menghapus Biologi, menambahkan variasi Fisika/Kimia/Geologi untuk mencapai 100.
+        const originalData = [
+            { q: "Sirkulasi siklon adalah", o: ["searah jarum jam di belahan bumi utara", "berlawanan arah jarum jam di belahan bumi utara", "berhubungan dengan sel bertekanan tinggi", "tidak pernah dalam keseimbangan geostropis", "A dan C benar"], a: "berlawanan arah jarum jam di belahan bumi utara" },
+            { q: "informasi berikut adalah betul mengenai palung laut, kecuali:", o: ["Terbentuk akibat proses ambesan/subsiden pada pematang samudera yang sudah tidak aktif lagi", "Berada pada dasar laut yang dalam dan berdinding curam", "Kedalaman bisa mencapai 11000 meter", "Terbentuk akibat benturan antara dua lempeng yang berbeda berat jenisnya", "Salah satu contoh palung adalah mariana trench"], a: "Terbentuk akibat proses ambesan/subsiden pada pematang samudera yang sudah tidak aktif lagi" },
+            { q: "Dalam proses penjalarannya, gelombang pasang surut memiliki peranan dalam pembentukan morfologi pantai. Manakah pernyataan yang tidak tepat?", o: ["Vortisitas lokal dari gelombang pasang surut menyebabkan keselarasan arus pasang dan arus surut.", "Residu dari arus pasang surut mempengaruhi arah longshore transport.", "Volume massa air yang bertukar di mulut estuari sering disebut prisma pasang surut.", "Secara umum, transpor sedimen dalam suatu laguna dibawa oleh gelombang pasang.", "Kawasan estuari seringkali menimbulkan pola arus pasang dan surut yang kompleks."], a: "Secara umum, transpor sedimen dalam suatu laguna dibawa oleh gelombang pasang." },
+            { q: "Manakah pernyataan yang salah?", o: ["Gelombang pasang surut menjalar ke sungai sebagai gelombang berjalan.", "Gelombang pasang surut dapat menjalar hingga hulu sungai.", "Tinggi gelombang pasut yang menjalar di estuari ditentukan oleh gaya gesek dan arus sungai.", "Dalam sebuah estuari, gelombang pasang surut tidak dapat berubah dari gelombang berjalan menjadi gelombang berdiri.", "Gelombang pasang surut dipengaruhi oleh fenomena non-periodik, seperti arus sungai."], a: "Dalam sebuah estuari, gelombang pasang surut tidak dapat berubah dari gelombang berjalan menjadi gelombang berdiri." },
+            { q: "Manakah fenomena berikut yang TIDAK muncul pada batas konvergensi lempeng?", o: ["Terbentuknya palung laut", "Terhalangnya aktivitas vulkanisme", "Merupakan daerah hiposentra gempa", "Penghancuran bagian lempeng", "Terjadinya timbunan sedimen"], a: "Terhalangnya aktivitas vulkanisme" },
+            { q: "Diketahui bahwa di lautan waktu tinggal Na adalah 80 x 10⁶ tahun dan waktu tinggal Al adalah 600 tahun. Apa yang dapat anda perkirakan dari informasi tersebut?", o: ["Na lebih reaktif daripada Al", "Na lebih mudah berpindah secara cepat ke sedimen daripada Al", "Na memiliki variasi konsentrasi yang lebih kecil (merata) dibandingkan Al", "Na lebih sulit larut dibandingkan Al", "Na mudah bereaksi dengan Al"], a: "Na memiliki variasi konsentrasi yang lebih kecil (merata) dibandingkan Al" },
+            { q: "Teknologi untuk memetakan dasar laut:", o: ["Kapal selam", "GPS", "Sinar Ultraviolet", "Sonar", "X-ray"], a: "Sonar" },
+            { q: "Pernyataan yang benar dari Ekman spiral adalah:", o: ["Dipengaruhi oleh keseimbangan Coriolis dan gaya gravitasi.", "Dipengaruhi oleh keseimbangan Coriolis, gesekan angin dan gaya viskositas.", "Menyebabkan arus permukaan 45° ke kanan dr angin di bumi bagian utara.", "A dan C benar", "E. B dan C benar"], a: "E. B dan C benar" },
+            { q: "Pernyataan berikut adalah benar mengenai kondisi pasang surut di Indonesia adalah:", o: ["Kondisi pasang surut di selat Karimata adalah harian tunggal/diurnal", "Kondisi pasang surut di selat Karimata adalah harian ganda/semi-diurnal", "Kondisi pasang surut di laut Jawa adalah harian tunggal/diurnal", "Kondisi pasang surut di laut Jawa adalah harian ganda/semi-diurnal", "Kondisi pasang surut di selat Makassar adalah harian tunggal/diurnal"], a: "Kondisi pasang surut di selat Karimata adalah harian tunggal/diurnal" },
+            { q: "Diantara lokasi dibawah ini, manakah yang memiliki tingkat salinitas tertinggi?", o: ["Laut Mediterania", "Teluk Benggala", "Samudera Atlantik", "Selat Melaka", "Laut Hitam"], a: "Laut Mediterania" },
+            { q: "Tahapan pembentukkan gelombang: (1. Fully developed sea, 2. Seas, 3. Ripples, 4. Angin)", o: ["2-4-3-1", "2-3-4-1", "4-3-2-1", "4-2-3-1", "4-2-1-3"], a: "4-3-2-1" },
+            { q: "Salah satu perbedaan antara kerak benua (continental crust) dan kerak samudra (oceanic crust) adalah kerak benua tersusun atas batuan granitis yang lebih tua dibandingkan batuan basal yang lebih muda di kerak samudra, menurut anda apakah penyebabnya?", o: ["Kerak benua lebih berat daripada kerak samudra sehingga terjadi subduksi di kerak benua.", "Kerak benua lebih tipis daripada kerak samudra sehingga tidak banyak terjadi pergerakan/pergeseran.", "Kerak samudra lebih berat daripada kerak benua sehingga tenggelam kedalam upper mantle (subduksi).", "Kerak samudra lebih tebal sehingga menghujam keatas kerak benua.", "E. Tidak ada perbedaan berat sehingga saling menghujam antara kerak samudra dengan kerak benua."], a: "Kerak samudra lebih berat daripada kerak benua sehingga tenggelam kedalam upper mantle (subduksi)." },
+            { q: "Beberapa tipe dari continental margins adalah:", o: ["Active margin, atlantic type, deep ocean floor, pacific type", "Atlantic type, marginal plateau, pacific type, borderland", "Island arcs, trenches, atlantic type, pacific type", "passive margin, mid-ocean ridges, atlantic type, pacific type", "Island arcs, mid-ocean ridges, marginal plateau, deep ocean floor"], a: "Island arcs, trenches, atlantic type, pacific type" },
+            { q: "Jika bumi tidak memiliki samudra", o: ["kehidupan akan lebih melimpah, karena kehidupan di lautan lebih \"encer\" daripada kehidupan di benua", "tidak akan ada atmosfer", "Kisaran suhu permukaan di bumi akan jauh lebih besar dari sekarang", "tidak akan ada pusat penyebaran", "E. semua yang di atas benar"], a: "Kisaran suhu permukaan di bumi akan jauh lebih besar dari sekarang" },
+            { q: "Manakah komponen yang menyusun black smoker?", o: ["Sulfite", "Oxide", "Sulfide", "Dioxide", "Hydroxide"], a: "Sulfide" },
+            { q: "Manakah pernyataan yang salah?", o: ["Current ripple merupakan ciri fisik yang dibentuk oleh arus laut", "Pola riak searah dibentuk oleh gelombang berdiri", "Pola riak searah dibentuk di daerah tepi pantai yang landai", "Pola riak tidak searah dibentuk oleh arus yang lemah", "Current ripple memperlihatkan undulasi yang berjarak teratur"], a: "Pola riak searah dibentuk oleh gelombang berdiri" },
+            { q: "Contoh gas dengan kelarutan rendah dan reaktivitas kimia yang rendah dalam air adalah", o: ["SO2", "NO2", "NH3", "N2", "Ar2"], a: "N2" },
+            { q: "Manakah pernyataan yang salah mengenai gerakan inersia berikut ini?", o: ["Gerakan inersia ditentukan berdasarkan asumsi bahwa terdapat slope di permukaan laut", "Secara fisis, gerakan inersia dapat dibangkitkan oleh angin kuat yang bertiup dalam suatu kurun waktu tertentu.", "Amplitudo suatu gerakan inersia ditentukan oleh gaya pembangkit dan gaya gesek.", "Arah rotasi gerakan inersia di belahan bumi bagian utara adalah searah jarum jam.", "Pengamat di belahan bumi utara akan melihat bahwa arah gerakan inersia adalah searah jarum jam di belahan bumi selatan."], a: "Gerakan inersia ditentukan berdasarkan asumsi bahwa terdapat slope di permukaan laut" },
+            { q: "Manakah komponen yang tidak mempengaruhi pasang surut dalam suatu return period (misalkan 100 tahun)?", o: ["Mean Sea Level.", "Mean High Water Springs.", "Spring tidal range.", "Neap tidal range.", "100-year high-water level."], a: "Mean Sea Level." },
+            { q: "Manakah pernyataan tentang Reynolds number yang benar?", o: ["Rasio antara gaya inertia terhadap gaya Coriolis", "Rasio antara gaya apung terhadap gaya gesek", "Rasio antara gaya inertia terhadap gaya dynamics viscosity", "Rasio antara gaya apung terhadap viscous force", "E. Rasio antara momentum diffusivity dengan thermal diffusivity"], a: "Rasio antara gaya inertia terhadap gaya dynamics viscosity" },
+            { q: "Manakah pernyataan tentang Rossby number yang benar?", o: ["Rasio antara gaya inertia terhadap gaya Coriolis", "Rasio antara gaya apung terhadap gaya gesek", "Rasio antara gaya inertia terhadap gaya dynamics viscosity", "Rasio antara gaya apung terhadap viscous force", "E. Rasio antara momentum diffusivity dengan thermal diffusivity"], a: "Rasio antara gaya inertia terhadap gaya Coriolis" },
+            { q: "Densitas air dipengaruhi oleh :", o: ["Salinitas", "Temperature", "Salinitas dan temperature", "Sedimen", "Intensitas cahaya matahari"], a: "Salinitas dan temperature" },
+            { q: "Saat gelombang meninggalkan daerah badai, apa yang bisa dikatakan tentang kecepatannya?", o: ["Gelombang yang lebih panjang melebihi gelombang yang lebih pendek.", "Gelombang bawah melampaui gelombang yang lebih tinggi.", "Gelombang yang lebih pendek melebihi gelombang yang lebih panjang.", "Gelombang yang lebih tinggi melebihi gelombang yang lebih rendah.", "Semua jawaban benar"], a: "Gelombang yang lebih panjang melebihi gelombang yang lebih pendek." },
+            { q: "Sebutkan beberapa klasifikasi dari marine sediments", o: ["Biogenous deposits, Carbonate deposits, Granule deposits", "Carbonate deposits, Lithogenous deposit, Hydrogenoues deposits", "Hydrogenoues deposits, Biogenous deposits, Lithogenous deposit", "Volcanogenic deposit, Granule deposits, Biogenous deposits", "Cosmogenous deposit, Hydrogenoues deposits, Carbonate deposits"], a: "Hydrogenoues deposits, Biogenous deposits, Lithogenous deposit" },
+            { q: "Gerakan naik turun permukaan laut yang menjalarkan energy dan biasanya dibangkitkan oleh angin adalah :", o: ["Gelombang", "Arus", "Pasang surut", "Temperatur", "Salinitas"], a: "Gelombang" },
+            { q: "Manakah dari pernyataan berikut tentang riwayat geologi yang benar?", o: ["Bumi berumur kira-kira 4,6 x 106 tahun.", "Penyebaran lantai laut pertama dimulai dengan perpisahan Pangaea di Era Mesozoikum.", "Lautan tidak ada sampai kira-kira 200 x 106 tahun lalu.", "Kehidupan di bumi dimulai sekitar 570 juta tahun yang lalu, di penghujung Era PreCambrian.", "E. Awal Paleozoik ditandai oleh evolusi organisme laut yang bisa mengambil kalsium karbonat atau silika dari air laut & menggunakannya untuk mensekresikan kulit kerang."], a: "Penyebaran lantai laut pertama dimulai dengan perpisahan Pangaea di Era Mesozoikum." },
+            { q: "Beberapa pernyataan mengenai arus laut berikut ini adalah benar, kecuali:", o: ["Secara mayoritas, arus laut disebabkan oleh angin.", "Pembentukan arus laut dapat disebabkan oleh pemanasan permukaan bumi yang tidak merata.", "Pola sirkulasi arus laut di tiga samudra sangat berbeda diakibatkan oleh perbedaan faktor geografis.", "Arus laut berperan dalam mendistribusikan panas dari daerah tropis ke daerah lintang tinggi.", "Sirkulasi arus global dapat menyeimbangkan temperatur air laut secara parsial."], a: "Pola sirkulasi arus laut di tiga samudra sangat berbeda diakibatkan oleh perbedaan faktor geografis." },
+            { q: "Faktor yang menentukan tinggi gelombang adalah", o: ["Kecepatan angin dan panjang fetch", "Kecepatan angin dan temperatur air", "Salinitas air dan panjang fetch", "Salinitas air dan temperatur air", "Densitas air dan panjang fetch"], a: "Kecepatan angin dan panjang fetch" },
+            { q: "Manakah diantara komponen pasang-surut berikut yang termasuk komponen harian tunggal/diurnal?", o: ["2Q1", "M2", "Zo", "S3", "N6"], a: "2Q1" },
+            { q: "1. Tunggang pasang surut tipe diurnal mencapai titik maksimum pada saat deklinasi bulan maksimum. 2. Deklinasi bulan membangkitkan dua titik pasang dan dua titik surut yang simetris pada dua tonjolan massa air di bumi. Dari kedua pernyataan berikut, manakah yang benar?", o: ["Pernyataan 1 benar, pernyataan 2 salah, keduanya berkaitan.", "Pernyataan 1 benar, pernyataan 2 benar, keduanya berkaitan.", "Pernyataan 1 salah, pernyataan 2 salah, keduanya tidak berkaitan.", "Pernyataan 1 salah, pernyataan 2 benar, keduanya tidak berkaitan.", "Pernyataan 1 benar, pernyataan 2 benar, keduanya tidak berkaitan."], a: "Pernyataan 1 benar, pernyataan 2 salah, keduanya berkaitan." },
+            { q: "Manakah pernyataan tentang Prandtl number yang benar?", o: ["Rasio antara gaya inertia terhadap gaya Coriolis", "Rasio antara gaya apung terhadap gaya gesek", "Rasio antara gaya inertia terhadap gaya dynamics viscosity", "Rasio antara gaya apung terhadap viscous force", "Rasio antara momentum diffusivity dengan thermal diffusivity"], a: "Rasio antara momentum diffusivity dengan thermal diffusivity" },
+            { q: "Bagaimana cara yang paling efektif & efisien untuk mengetahui adanya gunung api bawah laut yang aktif?", o: ["Melalui pengamatan terhadap fenomena semburan uap air panas akibat gelombang udara ber-sulfur yang dikeluarkan oleh gunung api tersebut", "Melalui survey seismik dengan menggunakan instrumen echo-sounder", "Melalui pengambilan sampel tanah pada dasar permukaan laut yang diduga gunung api bawah laut untuk dilihat kadar sulfur nya", "Melalui analisis perbedaan warna muka air laut dari data citra satelit", "Melalui survey batimetri laut dengan menggunakan drone bawah laut"], a: "Melalui survey seismik dengan menggunakan instrumen echo-sounder" },
+            { q: "Dari Pernyataan-pernyataan tersebut manakah yang benar:", o: ["Arus pantai selatan jawa mengarah ke timur sepanjang tahun", "Arus lintas Indonesia terkuat ada di dekat permukaan", "Selat makassar merupakan pintu keluar Arus Lintas Indonesia dari perairan Indonesia", "Arus di Jawa akan mengarah ke barat saat bulan Juni Juli Agustus", "Arus di Selat Karimata akan menrah ke selatan saat Bulan Desember Januari Februari"], a: "Arus di Jawa akan mengarah ke barat saat bulan Juni Juli Agustus" },
+            { q: "Fenomena yang paling mempengaruhi arus di Laut Jawa adalah :", o: ["ENSO", "IOD", "Monsun", "MJO", "Equatorial wave"], a: "Monsun" },
+            { q: "Pengukuran batimetri dapat menggunakan dua metode, metode apa saja dan apa perbedaannya?", o: ["Metode Altimetry mengukur dengan menggunakan waktu tempuh dari pulsa radar yang dikirimkan ke permukaan laut dan dipantulkan kembali ke satelit. Metode Akustik mengukur dengan menggunakan sonar yang diemisikan dan refleksi yang diterima dari objek dalam air atau dari dasar laut.", "Metode secchi disk mengukur dengan menurunkan disk hitam putih kedalam air hingga tidak kelihatan lagi. Metode Akustik mengukur dengan menggunakan sonar yang diemisikan dan refleksi yang diterima dari objek dalam air atau dari dasar laut.", "Metode satelit yang menggunakan sensor AVHR mendeteksi ketinggian permukaan laut. Metode Altimetry mengukur dengan menggunakan waktu tempuh dari pulsa radar.", "Metode secchi disk mengukur dengan menurunkan disk hitam putih kedalam air. Metode satelit menggunakan sensor AVHR.", "Metode satelit dengan sensor infrared. Metode Akustik menggunakan sonar."], a: "Metode Altimetry mengukur dengan menggunakan waktu tempuh dari pulsa radar yang dikirimkan ke permukaan laut dan dipantulkan kembali ke satelit. Metode Akustik mengukur dengan menggunakan sonar yang diemisikan dan refleksi yang diterima dari objek dalam air atau dari dasar laut." },
+            { q: "Manakah dari pernyataan berikut mengenai salinitas laut yang tidak benar?", o: ["Salinitas laut rata-rata adalah 35 persen.", "Terdapat rata-rata 35 gram garam terlarut dalam 1 kg air laut.", "Salinitas air laut berhubungan dengan lintang.", "Salinitas lebih rendah di daerah dengan presipitasi tinggi.", "Salinitas laut rata-rata adalah 38 persen."], a: "Salinitas laut rata-rata adalah 38 persen." },
+            { q: "Manakah dari berikut ini yang merupakan bukti terbaik untuk mendukung konsep Sea Floor Spreading?", o: ["Teka-teki gambar jigsaw yang jelas dari tepi benua", "distribusi fosil di benua Gondwana", "pengaturan anomali magnetik di dasar laut", "Perbedaan komposisi batuan yang membentuk kerak samudra dan kerak benua", "Perbedaan kerapatan kerak samudra dan kerak benua"], a: "pengaturan anomali magnetik di dasar laut" },
+            { q: "Sekitar 10% dari air laut dunia bergerak secara horizontal di lapisan permukaan (0-400 m). Dibawah ini yang BUKAN merupakan peran dari arus permukaan adalah...", o: ["Transfer panas dari daerah tropis ke lintang menengah dan tinggi", "Distribusi zat hara dan organisme laut", "Transportasi laut", "Mempengaruhi iklim dan cuaca", "Membangkitkan Sirkulasi Thermohaline"], a: "Membangkitkan Sirkulasi Thermohaline" },
+            { q: "Apakah yang membedakan perumusan arus geostropik dan arus yang dibangkitkan oleh angin?", o: ["Akselerasi advektif yang diabaikan.", "Perhitungan pengaruh tekanan.", "Gaya gesek.", "Gaya Coriolis.", "Hubungan antara gaya Coriolis dengan pengaruh tekanan."], a: "Gaya gesek." },
+            { q: "1 . Angin. 2. Pemanasan matahari. 3 . Tekanan udara. Manakah efek meteorologi yang paling mempengaruhi Mean Sea Level?", o: ["1 dan 2", "1", "3", "2", "2 dan 3"], a: "1 dan 2" },
+            { q: "Manakah proses yang tepat dalam sebuah pembentukan cekungan samudera?", o: ["Pemekaran kerak samudera - Zona pengangkatan - Sesar - Rekahan - Lembah - Cekungan sedimen", "Pemekaran kerak samudera - Proses sesar - Terbentuknya rekahan - Zona pengangkatan - Lembah - Cekungan sedimen", "Pemekaran kerak samudera - Proses sesar - Terbentuknya zona pengangkatan - Rekahan - Lembah - Cekungan sedimen", "Cekungan sedimen - Lembah - Rekahan - Sesar - Zona pengangkatan - Pemekaran kerak samudera", "Pemekaran kerak samudera - Terbentuknya rekahan - Proses sesar - Zona pengangkatan - Lembah - Cekungan sedimen"], a: "Pemekaran kerak samudera - Terbentuknya rekahan - Proses sesar - Zona pengangkatan - Lembah - Cekungan sedimen" },
+            { q: "Pernyataan yang benar mengenai arus lintas indonesia (Arlindo)/Indonesian Throughflow (ITF) adalah?", o: ["Arlindo adalah arus laut yang bergerak dari samudera Pasifik menuju samudera Hindia melalui perairan Indonesia akibat perbedaan temperatur diantara kedua samudera tersebut", "Arlindo adalah arus laut yang bergerak dari samudera Pasifik menuju samudera Hindia melalui perairan Indonesia yang dipengaruhi oleh pola angin muson.", "Arlindo adalah arus laut yang bergerak dari samudera Pasifik menuju samudera Hindia melalui perairan Indonesia akibat gaya coriolis", "Arlindo adalah arus laut yang bergerak dari samudera Pasifik menuju samudera Hindia melalui perairan Indonesia akibat pola gelombang pada samudera pasifik", "Arus laut arlindo terjadi akibat lokasi geografis yang terletak di sekitar garis khatulistiwa"], a: "Arlindo adalah arus laut yang bergerak dari samudera Pasifik menuju samudera Hindia melalui perairan Indonesia yang dipengaruhi oleh pola angin muson." },
+            { q: "Pernyataan yang benar mengenai lapisan termoklin adalah:", o: ["Lapisan ini merupakan transisi dari lapisan permukaan dengan temperatur tinggi dengan lapisan laut dalam dengan temperatur rendah", "Pada lapisan ini temperatur air laut adalah konstan", "Pada lapisan ini terdapat arus laut yang berbeda arah dengan lapisan permukaan", "Secara vertikal, temperatur tertinggi akan terdapat pada lapisan ini", "Pada lapisan ini temperatur air laut dipengaruhi oleh aktivitas vulkanik"], a: "Lapisan ini merupakan transisi dari lapisan permukaan dengan temperatur tinggi dengan lapisan laut dalam dengan temperatur rendah" },
+            { q: "Manakah pernyataan yang salah mengenai sirkulasi termohalin berikut ini?", o: ["Pergerakan air dari daerah kutub ke seluruh basin.", "Sirkulasi termohalin dibangkitkan oleh perbedaan densitas.", "Dalam perairan yang semi-terisolasi, densitas massa air bertambah akibat bertambahnya salinitas dan suhu.", "Saat densitas massa air di permukaan bertambah, kolom air menjadi tidak stabil dan akibatnya massa air yang lebih ringan naik ke permukaan.", "Massa air dengan salinitas tinggi bergerak dari Samudra Atlantik melalui Gulf Stream."], a: "Saat densitas massa air di permukaan bertambah, kolom air menjadi tidak stabil dan akibatnya massa air yang lebih ringan naik ke permukaan." },
+            { q: "Penyebab utama terjadinya kenaikan muka air pada masa holosen-moderen sejak 10000 tahun terakhir adalah", o: ["Kenaikan temperatur secara global yang menyebabkan mencairnya es di kutub dan gletser", "Tumbukan meteor pada permukaan bumi", "Pergerakan lempeng tektonik", "Proses penurunan muka tanah (land subsidence) yang terjadi secara alamiah", "Perubahan orientasi bumi secara perlahan"], a: "Kenaikan temperatur secara global yang menyebabkan mencairnya es di kutub dan gletser" },
+            { q: "Dalam transport Ekman, angin yang berhembus di atas permukaan laut akan menimbulkan transpor massa yang arahnya ... arah angin", o: ["Tegak lurus", "Sejajar", "Berlawanan", "45° ke arah kanan (BBU)", "45° ke arah kiri (BBU)"], a: "Tegak lurus" },
+            { q: "Pernyataan manakah yang mencirikan Gulf Stream?", o: ["Air dingin bergerak ke selatan sepanjang pantai timur Amerika Utara", "Air hangat bergerak ke utara dan timur melintasi Atlantik utara", "Air hangat bergerak ke timur sepanjang khatulistiwa", "Jawaban A dan B benar", "Jawaban A dan C benar"], a: "Air hangat bergerak ke utara dan timur melintasi Atlantik utara" },
+            { q: "Faktor yang mempengaruhi gelombang laut di permukaan adalah ...", o: ["Besarnya Kecepatan Angin", "Lamanya angin bertiup", "Panjang daerah pengaruh angin", "Arah datangnya angin", "Jawaban a, b, dan c benar"], a: "Jawaban a, b, dan c benar" },
+            { q: "Apa sifat eddies yang bergerak ke selatan Gulf Stream?", o: ["Dingin, dalam, dan berputar berlawanan arah jarum jam.", "Hangat, dangkal, dan berputar berlawanan arah jarum jam.", "Dingin, dangkal, dan berputar berlawanan arah jarum jam.", "Hangat, dangkal, dan berputar searah jarum jam.", "Jawaban A dan B benar"], a: "Dingin, dangkal, dan berputar berlawanan arah jarum jam." },
+            { q: "Efek dari pendangkalan akan mengakibatkan gelombang mengalami...", o: ["Refleksi", "Refraksi", "Difraksi", "Didtorsi", "Benar semua"], a: "Refraksi" },
+            { q: "Tahun-tahun ketika terjadi tipe non-El Nino/Southern Oscillation adalah:", o: ["Sistem tekanan rendah atmosfer terbentuk di bagian timur tropis Pasifik", "Sistem tekanan rendah atmosfer terbentuk di atas Hawaii", " \"Kolam hangat\" khas bentuk air di Pasifik tropis timur", "Semua benar", "Semua salah"], a: "Semua salah" },
+            { q: "Menurut hipotesa apungan benua, benua-benua di permukaan bumi ini asalnya merupakan satu benua yang dikenal dengan super kontinen yang disebut Pangaea. Hipotesa tersebut didasarkan pada bukti-bukti sebagai berikut, kecuali:", o: ["Sebaran binatang Harimau yang terdapat di India, thailand, Malaysia dan Indonesia", "Pantai barat afrika memiliki kecocokan bentuk garis pantai dengan pantai timur amerika selatan", "Fosil binatang reptil Lystrosaurus yang hidup Afrika, India dan Antartika", "Jenis batuan pada pegunungan Appalachian", "Sebaran fosil tumbuhan Glossopteris"], a: "Sebaran binatang Harimau yang terdapat di India, thailand, Malaysia dan Indonesia" },
+            { q: "Berikut ini yang BUKAN merupakan ciri dari sea (ombak) adalah ...", o: ["Gelombang yang masih berada di daerah yang masih dipengaruhi angin", "Bentuknya sangat tidak teratur", "Panjang gelombangnya pendek", "Bergerak perlahan menuju pantai meskipun pada hari tenang", "Puncaknya runcing dan berbuih"], a: "Bergerak perlahan menuju pantai meskipun pada hari tenang" },
+            { q: "Tsunami termasuk kedalam jenis gelombang perairan apa?", o: ["High water wave", "Shallow water wave", "Deep water wave", "Surface wave", "Tidal wave"], a: "Shallow water wave" },
+            { q: "Hal-hal berikut menentukan kondisi pasang-surut pada suatu lokasi, kecuali:", o: ["Temperatur air laut", "Gravitasi matahari dan bulan", "Bentuk topografi laut", "Bentuk garis pantai pesisir", "Rotasi bumi"], a: "Temperatur air laut" },
+            { q: "Arus inersia merupakan arus yang:", o: ["Dapat timbul akibat angin yang bertiup di atas permukaan laut dalam waktu yang relatif lama", "Timbul akibat pengaruh angin berhenti bergerak saat angin berhenti bertiup", "Dalam gerakannya akan dipengaruhi oleh gaya coriolis yang membuat arus bergerak dalam arah bolak-balik", "Periodanya bergantung pada lintang tempat, nilainya makin besar ke arah ekuator", "Benar semua"], a: "Benar semua" },
+            { q: "Arus Ekman merupakan arus yang timbul akibat kesetimbangan antara gaya Coriolis dan gaya gesekan. Asumsi yang digunakan dalam membangun model Ekman adalah ...", o: ["Kedalaman laut berhingga", "Tidak ada batas lateral", "Laut heterogen", "Arus mengikuti kecepatan angin", "Terdapat gradient tekanan"], a: "Tidak ada batas lateral" },
+            { q: "Seiches merupakan salah satu bentuk dari gelombang berdiri (standing wave). Seiches tidak dapat terjadi di ...", o: ["Laut lepas", "Danau", "Teluk", "Estuari", "Pelabuhan"], a: "Laut lepas" },
+            { q: "Meridional overturning circulation, yang sering dikenal dengan MOC, adalah sirkulasi berscala global... Manakah dari pernyaaan ini yang benar.", o: ["Resolusi temporal dari ocean gyre adalah musiman, sehingga tidak mungkin mempengaruhi MOC.", "MOC coexist bersama horizontal ocean gyre dan mempengaruhi sirkulasi regional dan global.", "MOC tidak coexist bersama horizontal ocean gyre karena gyre tidak mempengaruhi bottom water circulation.", "MOC dan Ocean Gyre disebabkan oleh gaya yang berbeda.", "Ocean gyre disebabkan distribusi angin yang tidak merata."], a: "MOC coexist bersama horizontal ocean gyre dan mempengaruhi sirkulasi regional dan global." },
+            { q: "Salinitas adalah jumlah total dari garam-garam yang larut di dalam air laut. Manakah komponen berikut yang merupakan komponen minor garam di laut ...", o: ["Silika", "Magnesium", "Calcium", "Potassium", "Bicarbonat"], a: "Silika" },
+            { q: "Jika diketahui konsentrasi potassium (K+) pada salinitas 34,4 ‰ adalah 0,38 ‰, maka berapakah konsentrasi potassium pada suatu perairan dengan salinitas 36 ‰?", o: ["0,38 ‰", "0,36 ‰", "0,39 ‰", "0,011 ‰", "0,013 ‰"], a: "0,39 ‰" },
+            { q: "Ocean conveyor belt adalah pola arus global yang diakibatkan oleh perbedaan densitas air laut. Apakah yang akan terjadi apabila sirkulasi ini terganggu?", o: ["Perubahan iklim/migrasi iklim", "Perubahan garis muka pantai yang dilalui sirkulasi arus ini", "Peningkatan temperatur air secara global", "Kenaikan permukaan air pada lokasi yang dilalui sirkulasi arus ini", "Peningkatan densitas air pada bumi bagian Selatan"], a: "Perubahan iklim/migrasi iklim" },
+            { q: "Apa penyebab adanya perbedaan antara white smoker dan black smoker di cerobong hydrothermal?", o: ["Suhu di white smoker jauh lebih tinggi daripada di black smoker", "Aliran di black smoker jauh lebih lambat daripada di white smoker", "White smoker berwarna putih karena mengandung mineral logam", "Black smoker berwarna hitam karena mengandung mineral sulfide", "Black smoker karena terbentuk barium, calcium dan silicon"], a: "Black smoker berwarna hitam karena mengandung mineral sulfide" },
+            { q: "Rayleigh number berasosiasi dengan buoyancy-driven flow. Manakah pernyataan yang benar tentang produk turunan dari Rayleigh number?", o: ["Rasio antara gaya inertia terhadap gaya Coriolis", "Rasio antara gaya apung terhadap gaya gesek", "Rasio antara gaya inertia terhadap dynamics viscosity", "Rasio antara gaya apung terhadap viscous force", "Rasio antara momentum diffusivity dengan thermal diffusivity"], a: "Rasio antara gaya apung terhadap viscous force" },
+            { q: "Bagaimana energi gelombang terdistribusi di garis pantai yang tidak beraturan?", o: ["Energi didistribusikan secara merata di hampir semua jenis pantai.", "Energi difokuskan di teluk dan tersebar di tanjung.", "Energi difokuskan pada tanjung dan tersebar di teluk.", "Jawaban B dan C benar", "Semua jawaban benar"], a: "Energi difokuskan pada tanjung dan tersebar di teluk." },
+            { q: "Data pasang-surut menjadi informasi utama pada aplikasi-aplikasi sebagai berikut, kecuali:", o: ["Desain jalur evakuasi bencana tsunami", "Desain tinggi struktur pemecah gelombang/breakwater", "Program restorasi habitat bakau", "Sistem pengendalian banjir pada kota-kota pesisir", "Sistem manajemen pada Pelabuhan"], a: "Desain jalur evakuasi bencana tsunami" },
+            { q: "Apa yang akan terjadi jika tidak ada Coriolis effect?", o: ["Tidak ada arus laut", "Angin akan bergerak ke timur dan barat tanpa pembelokan", "Sirkulasi atmosfer akan bergerak bolak-balik diantara equator dan kedua kutub bumi", "Arus laut akan bergerak bolak-balik dari equator menuju kutub", "Tranfer energy akan menjadi lebih mudah"], a: "Sirkulasi atmosfer akan bergerak bolak-balik diantara equator dan kedua kutub bumi" },
+            { q: "Naik turun muka air laut yang disebabkan oleh gaya grafitasi antara Bulan dan Matahari disebut :", o: ["Gelombang perairan dangkal", "Arus", "Pasang surut", "Gelombang Panjang", "Gelombang Kelvin"], a: "Pasang surut" },
+            { q: "Apa yang dimaksud dengan kapasitas buffer pada laut?", o: ["Kemampuan air laut untuk menstabilkan pH air laut.", "Kemampuan air laut untuk menstabilkan salinitas air laut", "Kemampuan air laut untuk menaikan pH air laut.", "Kemampuan air laut untuk menaikan salinitas air laut", "Kemampuan air laut untuk menurunkan pH air laut."], a: "Kemampuan air laut untuk menstabilkan pH air laut." },
+            { q: "Formasi Deep Water Atlantik Utara:", o: ["terjadi di Atlantik subantarctic dari pendinginan yang relatif asin", "tidak penting dalam sirkulasi termohalin laut", "dapat ditingkatkan dengan mencairnya lapisan es di garis lintang tinggi", "mungkin memainkan peran dalam perubahan iklim antropogenik di masa depan", "Salah semua"], a: "mungkin memainkan peran dalam perubahan iklim antropogenik di masa depan" },
+            { q: "Berikut adalah penjelasan mengenai hidrotermal, kecuali:", o: ["Larutan sisa magma", "Kaya akan logam berat", "Logam pada hidrotermal bersumber dari proses pembentukan endapan", "Mengisi lubang-lubang batuan", "Mengganti unsur batuan yang ditempati"], a: "Mengganti unsur batuan yang ditempati" },
+            { q: "Selama tahun El Nino / Southern Oscillation, pola cuaca secara global berubah, termasuk:", o: ["lebih banyak kebakaran dan kekeringan di Indonesia dan Australia", "coastal upwelling yang lebih lemah di Peru", "lebih banyak badai musim dingin di California selatan", "semua benar", "semua salah"], a: "semua benar" },
+            { q: "1 . Pegunungan laut di sekitar Greenland dan Skotlandia mencegah terbentuknya massa air di Arktik. 2. Pembentukan Antartic Bottom Water (ABW) terjadi akibat adanya isolasi parsial di Laut Weddell. 3 . Arus dekat dasar umumnya lebih lambat dari arus permukaan (10-20 cm/s). Manakah pernyataan yang paling benar?", o: ["1", "2", "3", "1 dan 2", "1 dan 3"], a: "1 dan 2" },
+            { q: "Overturning circulation terjadi ketika:", o: ["Kolom air isopiknal.", "Densitas di permukaan lebih rendah daripada di kedalaman.", "Piknoklin memiliki gradien yang curam.", "Densitas di kedalaman lebih rendah daripada di permukaan.", "Densitas di kedalaman lebih tinggi daripada di permukaan."], a: "Densitas di permukaan lebih rendah daripada di kedalaman." },
+            { q: "Arus lintas Indonesia ada karena :", o: ["Angin di Samudra Pasifik lebih kuat", "Angin yang bertiup di Selat makasar", "Arus yang kuat di Samudra India", "Tinggi muka air di Samudra Pasifik lebih tinggi dari pada Hindia", "Arus yang kuat di Samudra Pasifik lebih kuat"], a: "Tinggi muka air di Samudra Pasifik lebih tinggi dari pada Hindia" },
+            { q: "Perbedaan antara low tide dan high tide disebut", o: ["Range Pasut", "Spring tide", "Neap tide", "Rip tide", "Fullmoon"], a: "Range Pasut" }
+        ];
+
+        // Soal Tambahan Fisika/Geologi/Kimia untuk mencapai 100
+        const extraData = [
+            { q: "Parameter Coriolis (f) bernilai maksimum di:", o: ["Ekuator", "Kutub", "Lintang 45°", "Seluruh samudera sama", "Dasar laut"], a: "Kutub" },
+            { q: "Kedalaman termoklin permanen biasanya berada pada kedalaman:", o: ["0 - 50 m", "100 - 1000 m", "2000 - 4000 m", "Hanya di palung", "Permukaan air"], a: "100 - 1000 m" },
+            { q: "Gaya yang dominan pada pembentukan gelombang kapiler adalah:", o: ["Gravitasi", "Tegangan permukaan", "Coriolis", "Gaya sentrifugal", "Gesekan dasar"], a: "Tegangan permukaan" },
+            { q: "Transport Ekman bersih (net) adalah rata-rata pergerakan air di:", o: ["Lapisan campuran saja", "Seluruh kolom air", "Lapisan Ekman", "Dasar laut", "Hanya di permukaan"], a: "Lapisan Ekman" },
+            { q: "Kecepatan fase gelombang di perairan dangkal dirumuskan sebagai:", o: ["C = sqrt(g*h)", "C = L / T", "C = g / 2*pi", "C = sqrt(g*L / 2*pi)", "Semua salah"], a: "C = sqrt(g*h)" },
+            { q: "Salinitas air laut rata-rata dinyatakan dalam satuan:", o: ["psu (practical salinity unit)", "gram/cm3", "derajat Celcius", "meter/detik", "mil laut"], a: "psu (practical salinity unit)" },
+            { q: "Komponen utama garam di air laut adalah:", o: ["Magnesium", "Kalsium", "Natrium dan Klorida", "Sulfat", "Kalium"], a: "Natrium dan Klorida" },
+            { q: "Gas yang paling melimpah di air laut adalah:", o: ["Oksigen", "Karbon dioksida", "Nitrogen", "Argon", "Helium"], a: "Nitrogen" },
+            { q: "Apa yang terjadi pada densitas air jika salinitasnya meningkat?", o: ["Densitas menurun", "Densitas tetap", "Densitas meningkat", "Air membeku", "Air menguap"], a: "Densitas meningkat" },
+            { q: "Arus geostropik mengalir sejajar dengan:", o: ["Garis pantai", "Garis lintang", "Garis isobar", "Garis bujur", "Arah angin"], a: "Garis isobar" },
+            { q: "Warna air laut dipengaruhi oleh hamburan cahaya yang disebut:", o: ["Hamburan Mie", "Hamburan Rayleigh", "Efek Doppler", "Refraksi", "Difraksi"], a: "Hamburan Rayleigh" },
+            { q: "Zona laut terbuka di luar landas kontinen disebut zona:", o: ["Neritik", "Oseanik", "Litoral", "Intertidal", "Hadal"], a: "Oseanik" },
+            { q: "Sedimen yang berasal dari luar angkasa disebut:", o: ["Lithogenous", "Biogenous", "Hydrogenous", "Cosmogenous", "Volcanogenic"], a: "Cosmogenous" },
+            { q: "Apa instrumen yang digunakan untuk mengambil sampel sedimen kolom?", o: ["Grab sampler", "Core sampler", "Plankton net", "CTD", "Secchi disk"], a: "Core sampler" },
+            { q: "Kecepatan arus pasang surut biasanya paling kuat saat:", o: ["Pasang tinggi", "Surut rendah", "Antara pasang dan surut (Mid-tide)", "Tergantung suhu", "Setiap saat sama"], a: "Antara pasang dan surut (Mid-tide)" },
+            { q: "Apa sebutan untuk garis yang menghubungkan titik-titik dengan waktu pasang yang sama?", o: ["Isopath", "Cotidal line", "Isobar", "Isotherm", "Isohaline"], a: "Cotidal line" },
+            { q: "Gelombang yang periodenya antara 30 detik hingga 5 menit disebut:", o: ["Capillary wave", "Gravity wave", "Infragravity wave", "Tsunami", "Tide"], a: "Infragravity wave" },
+            { q: "Siklus pasang surut dengan dua pasang dan dua surut per hari disebut:", o: ["Diurnal", "Semi-diurnal", "Mixed dominant diurnal", "Mixed dominant semi-diurnal", "Anomali"], a: "Semi-diurnal" },
+            { q: "Apa nama arus batas barat di Samudra Pasifik Utara?", o: ["Gulf Stream", "Kuroshio", "California Current", "Peru Current", "Agulhas Current"], a: "Kuroshio" },
+            { q: "Proses pendinginan air di kutub yang menyebabkannya tenggelam disebut:", o: ["Konveksi", "Adveksi", "Difusi", "Upwelling", "Downwelling"], a: "Downwelling" },
+            { q: "Lapisan air yang homogen densitasnya akibat pencampuran angin disebut:", o: ["Piknoklin", "Mixed Layer", "Termoklin", "Haloklin", "Abisal"], a: "Mixed Layer" },
+            { q: "Gaya yang menyebabkan pembelokan arah arus akibat rotasi bumi adalah:", o: ["Gaya Sentrifugal", "Gaya Coriolis", "Gaya Magnetik", "Gaya Gesek", "Gaya Gravitasi"], a: "Gaya Coriolis" },
+            { q: "Nilai salinitas 35 ppt sama dengan:", o: ["3.5%", "35%", "0.35%", "0.035%", "350%"], a: "3.5%" },
+            { q: "Arus yang bergerak berlawanan arah dengan angin di ekuator disebut:", o: ["Arus Ekuatorial Utara", "Arus Ekuatorial Selatan", "Arus Kontra Ekuatorial", "Arus Monsun", "Arus Inersia"], a: "Arus Kontra Ekuatorial" }
+        ];
+
+        // Combine and Shuffle
+        const allQuestions = [...originalData, ...extraData].slice(0, 100);
+        let currentQuestions = [];
+        let userAnswers = [];
+        let currentQuestionIndex = 0;
+
+        function startQuiz(type) {
+            currentQuestions = [...allQuestions].sort(() => Math.random() - 0.5);
+            userAnswers = Array(currentQuestions.length).fill(null);
+            currentQuestionIndex = 0;
+            
+            document.getElementById('start-screen').classList.add('hidden');
+            document.getElementById('quiz-screen').classList.remove('hidden');
+            document.getElementById('result-screen').classList.add('hidden');
+            
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            const q = currentQuestions[currentQuestionIndex];
+            document.getElementById('question-text').textContent = q.q;
+            document.getElementById('question-counter').textContent = `Soal ${currentQuestionIndex + 1} / ${currentQuestions.length}`;
+            document.getElementById('progress-bar').style.width = `${((currentQuestionIndex + 1) / currentQuestions.length) * 100}%`;
+            
+            const container = document.getElementById('options-container');
+            container.innerHTML = '';
+            
+            q.o.forEach((opt) => {
+                const btn = document.createElement('button');
+                btn.className = 'quiz-option w-full p-4 border-2 border-gray-200 rounded-xl text-left hover:bg-blue-50 transition duration-200';
+                btn.textContent = opt;
+                if (userAnswers[currentQuestionIndex] === opt) btn.classList.add('selected');
+                btn.onclick = () => selectOption(opt);
+                container.appendChild(btn);
+            });
+
+            document.getElementById('prev-btn').style.visibility = currentQuestionIndex === 0 ? 'hidden' : 'visible';
+            document.getElementById('next-btn').textContent = currentQuestionIndex === currentQuestions.length - 1 ? 'Selesai & Lihat Hasil' : 'Selanjutnya';
+        }
+
+        function selectOption(opt) {
+            userAnswers[currentQuestionIndex] = opt;
+            const options = document.querySelectorAll('.quiz-option');
+            options.forEach(btn => {
+                if(btn.textContent === opt) btn.classList.add('selected');
+                else btn.classList.remove('selected');
+            });
+        }
+
+        function nextQuestion() {
+            if (currentQuestionIndex < currentQuestions.length - 1) {
+                currentQuestionIndex++;
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function prevQuestion() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                loadQuestion();
+            }
+        }
+
+        function toggleNavPanel() {
+            const panel = document.getElementById('nav-panel');
+            panel.classList.toggle('hidden');
+            if (!panel.classList.contains('hidden')) {
+                populateNav();
+            }
+        }
+
+        function populateNav() {
+            const grid = document.getElementById('nav-grid');
+            grid.innerHTML = '';
+            currentQuestions.forEach((_, i) => {
+                const btn = document.createElement('button');
+                btn.className = `nav-btn p-2 rounded-md transition-colors duration-200 flex items-center justify-center h-10 w-10`;
+                btn.textContent = i + 1;
+                
+                if (userAnswers[i] !== null) btn.classList.add('answered');
+                if (i === currentQuestionIndex) btn.classList.add('current');
+                
+                btn.onclick = () => {
+                    currentQuestionIndex = i;
+                    loadQuestion();
+                    toggleNavPanel();
+                };
+                grid.appendChild(btn);
+            });
+        }
+
+        function showResults() {
+            document.getElementById('quiz-screen').classList.add('hidden');
+            document.getElementById('result-screen').classList.remove('hidden');
+            
+            let score = 0;
+            currentQuestions.forEach((q, i) => {
+                if (userAnswers[i] === q.a) score++;
+            });
+
+            document.getElementById('score-summary').textContent = `Skor Anda: ${score} / ${currentQuestions.length}`;
+            
+            const review = document.getElementById('answers-review');
+            review.innerHTML = '';
+            currentQuestions.forEach((q, i) => {
+                const isCorrect = userAnswers[i] === q.a;
+                const div = document.createElement('div');
+                div.className = `p-4 mb-4 border rounded-lg ${isCorrect ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'}`;
+                div.innerHTML = `
+                    <p class="font-bold">${i + 1}. ${q.q}</p>
+                    <p class="mt-2">Jawaban Anda: <span class="${isCorrect ? 'text-green-700' : 'text-red-700'}">${userAnswers[i] || '(Tidak dijawab)'}</span></p>
+                    ${!isCorrect ? `<p class="mt-1">Jawaban Benar: <span class="text-green-700">${q.a}</span></p>` : ''}
+                `;
+                review.appendChild(div);
+            });
+        }
+
+        function restartQuiz() {
+            document.getElementById('result-screen').classList.add('hidden');
+            document.getElementById('start-screen').classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>                <button onclick="toggleNavPanel()" class="bg-gray-500 text-white font-bold py-2 px-6 rounded-lg hover:bg-gray-600">Tutup</button>
             </div>
         </div>
     </div>
